@@ -1,0 +1,3 @@
+import 'package:flutter/material.dart'; import '../../../core/widgets/app_shell.dart';
+class RepresentativesPage extends StatelessWidget { const RepresentativesPage({super.key}); @override Widget build(BuildContext context) => const AppShell(title: 'Representatives', child: _CrudModule(description: 'Add, edit, suspend, delete, and review representative performance.')); }
+class _CrudModule extends StatelessWidget { const _CrudModule({required this.description}); final String description; @override Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(description), const SizedBox(height: 16), FilledButton.icon(onPressed: null, icon: Icon(Icons.add), label: Text('Add'))]); }

@@ -1,0 +1,2 @@
+rules_version = '2';
+service firebase.storage { match /b/{bucket}/o { function signedIn(){ return request.auth != null; } match /products/{file=**} { allow read: if signedIn(); allow write: if signedIn() && request.resource.size < 10 * 1024 * 1024; } match /company/{file=**} { allow read: if signedIn(); allow write: if signedIn(); } } }

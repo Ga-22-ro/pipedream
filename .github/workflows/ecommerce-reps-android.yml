@@ -1,0 +1,36 @@
+name: Electronic Stores Reps Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ecommerce_reps/**'
+      - '.github/workflows/ecommerce-reps-android.yml'
+  pull_request:
+    paths:
+      - 'ecommerce_reps/**'
+      - '.github/workflows/ecommerce-reps-android.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ecommerce_reps
+      - name: Run tests
+        run: flutter test
+        working-directory: ecommerce_reps
+      - name: Build release APK
+        run: flutter build apk --release
+        working-directory: ecommerce_reps
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esrms-apk
+          path: ecommerce_reps/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error

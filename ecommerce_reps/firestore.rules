@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function role() { return signedIn() ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role : null; }
+    function isSuperAdmin() { return role() == 'superAdmin'; }
+    function isAdmin() { return role() in ['superAdmin', 'admin']; }
+    function ownsUser(uid) { return signedIn() && request.auth.uid == uid; }
+    match /users/{uid} { allow read: if ownsUser(uid) || isAdmin(); allow create, update, delete: if isSuperAdmin(); }
+    match /representatives/{id} { allow read: if isAdmin() || resource.data.userId == request.auth.uid; allow write: if isAdmin(); }
+    match /customers/{id} { allow read, write: if isAdmin() || request.resource.data.representativeId == request.auth.uid || resource.data.representativeId == request.auth.uid; }
+    match /products/{id} { allow read: if signedIn(); allow write: if isAdmin(); }
+    match /orders/{id} { allow read: if isAdmin() || resource.data.representativeId == request.auth.uid; allow create: if signedIn() && (isAdmin() || request.resource.data.representativeId == request.auth.uid); allow update: if isAdmin() || resource.data.representativeId == request.auth.uid; allow delete: if isAdmin(); }
+    match /financial_transactions/{id} { allow read: if isAdmin(); allow write: if isAdmin(); }
+    match /notifications/{id} { allow read, update: if signedIn() && resource.data.userId == request.auth.uid; allow create, delete: if isAdmin(); }
+    match /settings/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
+    match /activity_logs/{id} { allow read: if isAdmin(); allow create: if signedIn(); allow update, delete: if false; }
+    match /roles/{id} { allow read: if signedIn(); allow write: if isSuperAdmin(); }
+  }
+}
