@@ -1,0 +1,5 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import '../../../core/widgets/app_shell.dart';
+
+class DashboardPage extends StatelessWidget { const DashboardPage({super.key}); @override Widget build(BuildContext context) { const stats = ['Total Orders','Delivered Orders','Pending Orders','Returned Orders','Daily Revenue','Monthly Revenue']; return AppShell(title: 'Dashboard', child: LayoutBuilder(builder: (context, c) => ListView(children: [Wrap(spacing: 12, runSpacing: 12, children: [for (final s in stats) SizedBox(width: c.maxWidth > 700 ? 220 : c.maxWidth, child: Card(child: ListTile(title: Text(s), subtitle: const Text('Realtime Firestore metric'))))]), const SizedBox(height: 24), SizedBox(height: 260, child: Card(child: Padding(padding: const EdgeInsets.all(16), child: LineChart(LineChartData(lineBarsData: [LineChartBarData(spots: const [FlSpot(0,0), FlSpot(1,2), FlSpot(2,1), FlSpot(3,4)])])))), const SizedBox(height: 16), const Card(child: ListTile(title: Text('Representative Performance'), subtitle: Text('Ranked by delivered orders, revenue, returns, and profit.')))])); }}
